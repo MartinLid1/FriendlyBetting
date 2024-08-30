@@ -92,8 +92,6 @@ export async function cancelDocument(documentId: string): Promise<any> {
 }
 
 export async function initiateSigningProcess(documentId: string, signatories: any[]): Promise<any> {
-	await updateDocument(documentId, { /* any updates */ });
-
 	await setSignatories(documentId, signatories);
 
 	const startResult = await startSigning(documentId);
