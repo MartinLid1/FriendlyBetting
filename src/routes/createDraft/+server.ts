@@ -1,6 +1,6 @@
 import type { RequestHandler } from '@sveltejs/kit';
 
-const placeHolder = async (participants, contractDraft) => {
+const draftPrompt = async (participants, contractDraft) => {
 	const url = 'https://api.openai.com/v1/chat/completions';
 
 	const apiKey =
@@ -57,7 +57,7 @@ export const POST: RequestHandler = async ({ request }) => {
 		}
 
 		// Call the placeholder function with the received data
-		const result = await placeHolder(participants, contractDraft);
+		const result = await draftPrompt(participants, contractDraft);
 
 		// Return the success response from the placeholder function
 

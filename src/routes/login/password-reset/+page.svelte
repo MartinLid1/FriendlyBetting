@@ -1,6 +1,5 @@
 <script lang="ts">
 	import { applyAction, enhance } from '$app/forms';
-	import Agent0Header from '$lib/components/Agent0Header.svelte';
 	import { pb } from '$lib/pocketbase';
 </script>
 
@@ -15,7 +14,6 @@
 			};
 		}}
 	>
-		<Agent0Header level="h3" />
 		<h3>Password reset</h3>
 		If you are registered, you will recieve an email with password reset instructions.
 		<div class="space-y-1 mt-5">

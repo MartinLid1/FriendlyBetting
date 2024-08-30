@@ -1,6 +1,5 @@
 <script lang="ts">
 	import { page } from '$app/stores';
-	import Agent0Header from '$lib/components/Agent0Header.svelte';
 	import { superForm } from 'sveltekit-superforms';
 
 	export let data;
@@ -11,14 +10,8 @@
 	$: redirectMessage = $page.url.searchParams.get('message') ?? '';
 </script>
 
-<svelte:head>
-	<title>agent0.ai - Login</title>
-	<meta name="description" content="agent0.ai - Login here" />
-</svelte:head>
-
 <div class="min-h-screen flex items-center justify-center">
 	<form method="POST" class="card variant-soft p-5 max-w-sm text-center flex flex-col" use:enhance>
-		<Agent0Header level="h3" />
 		{#if redirectMessage}
 			<p class="card p-2 mt-2 mb-2 variant-soft-warning">{redirectMessage}</p>
 		{/if}
