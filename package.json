@@ -46,7 +46,13 @@
   "type": "module",
   "dependencies": {
     "@floating-ui/dom": "1.6.10",
+    "form-data": "^4.0.0",
     "highlight.js": "11.10.0",
-    "pocketbase": "^0.21.5"
+    "install": "^0.13.0",
+    "node-fetch": "^3.3.2",
+    "npm": "^10.8.3",
+    "pdfkit": "^0.15.0",
+    "pocketbase": "^0.21.5",
+    "uuid": "^10.0.0"
   }
 }
