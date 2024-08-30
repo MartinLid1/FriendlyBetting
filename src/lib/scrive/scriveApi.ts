@@ -15,10 +15,15 @@ function getAuthorizationHeader() {
 	return `OAuth oauth_signature_method="PLAINTEXT",oauth_consumer_key="${OAUTH_CONSUMER_KEY}",oauth_token="${OAUTH_TOKEN}",oauth_signature="${oauthSignature}"`;
 }
 
-async function fetchFromApi(endpoint: string, method: string = 'GET', body?: any, contentType: string = 'application/json'): Promise<any> {
+async function fetchFromApi(
+	endpoint: string,
+	method: string = 'GET',
+	body?: any,
+	contentType: string = 'application/json'
+): Promise<any> {
 	const url = `${API_BASE_URL}${endpoint}`;
 	const headers: any = {
-		'Authorization': getAuthorizationHeader()
+		Authorization: getAuthorizationHeader()
 	};
 
 	const options: any = {
@@ -48,12 +53,15 @@ async function fetchFromApi(endpoint: string, method: string = 'GET', body?: any
 	}
 }
 
-async function postToApi(endpoint: string, params: {
-	[key: string]: any
-}): Promise<any> {
+async function postToApi(
+	endpoint: string,
+	params: {
+		[key: string]: any;
+	}
+): Promise<any> {
 	let url = `${API_BASE_URL}${endpoint}`;
 	const headers: any = {
-		'Authorization': getAuthorizationHeader()
+		Authorization: getAuthorizationHeader()
 	};
 
 	const options: any = {
@@ -80,7 +88,10 @@ async function postToApi(endpoint: string, params: {
 	}
 }
 
-export async function createNewDocument(documentContents: string, saved: boolean = true): Promise<{ id, parties }> {
+export async function createNewDocument(
+	documentContents: string,
+	saved: boolean = true
+): Promise<{ id; parties }> {
 	const formData = new FormData();
 	const pdf: Buffer = await createPDFfromString(documentContents);
 
@@ -103,8 +114,10 @@ export async function startSigning(documentId: string): Promise<any> {
 	return fetchFromApi(`/documents/${documentId}/start`, 'POST');
 }
 
-
-export async function createDocAndStartSigningProcess(documentContents: string, signatorieEmails: string[]): Promise<any> {
+export async function createDocAndStartSigningProcess(
+	documentContents: string,
+	signatorieEmails: string[]
+): Promise<any> {
 	const document = await createNewDocument(documentContents);
 	const documentId = document.id;
 	document.parties = (document.parties || []) as Signatory[];
@@ -150,7 +163,7 @@ function createSignatoriesFromEmails(emails: string[]): Signatory[] {
 
 function createPDFfromString(content: string): Promise<Buffer> {
 	return new Promise((resolve, reject) => {
-		const doc = new PDFDocument;
+		const doc = new PDFDocument();
 		const buffers: Buffer[] = [];
 
 		doc.on('data', buffers.push.bind(buffers));

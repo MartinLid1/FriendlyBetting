@@ -35,7 +35,7 @@
 				body: JSON.stringify({
 					participants: [
 						participants[0],
-						{ name: 'David The Great', email: 'david117@tutanota.com' }
+						{ name: 'Fredrik Öhrström', email: 'fredrik@ohrstrom.io' }
 					],
 					contractContent: 'contractDraftResult'
 				})
