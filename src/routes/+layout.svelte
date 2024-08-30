@@ -21,7 +21,7 @@
 	import { computePosition, autoUpdate, flip, shift, offset, arrow } from '@floating-ui/dom';
 	import { storePopup } from '@skeletonlabs/skeleton';
 	import { currentUser } from '$lib/stores/user';
-	import { get } from 'svelte/store';
+
 	storePopup.set({ computePosition, autoUpdate, flip, shift, offset, arrow });
 
 	export let data;
@@ -35,8 +35,12 @@
 		<AppBar>
 			<svelte:fragment slot="lead">
 				<strong class="text-xl">FriendlyBetting</strong>
+				<span class="ml-4">{data.user.email}</span>
 			</svelte:fragment>
-			<svelte:fragment slot="trail">by ATG/Hjärngänget</svelte:fragment>
+			<svelte:fragment slot="trail">
+				<a href="/documents"> <button class="btn variant-soft">My bets</button></a>
+				<span>by ATG/Hjärngänget</span>
+			</svelte:fragment>
 		</AppBar>
 	</svelte:fragment>
 	<!-- Page Route Content -->

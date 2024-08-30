@@ -1,13 +1,14 @@
 <script lang="ts">
+	import type { PageData } from './$types';
 	import { browser } from '$app/environment';
-	import { currentUser } from '$lib/stores/user';
 	import SvelteMarkdown from 'svelte-markdown';
 
-	let participants = [{ name: '', email: '' }];
 	let contractDraft = '';
 	let contractDraftResult = '';
 	let loading = false;
 	let isEditing = false;
+	export let data: PageData;
+	let participants = [{ name: data.user?.name, email: data.user?.email }];
 
 	function addParticipant() {
 		participants = [...participants, { name: '', email: '' }];
@@ -17,6 +18,68 @@
 		if (participants.length > 1) {
 			participants = participants.filter((_, i) => i !== index);
 		}
+	}
+
+	async function createContractTest() {
+		if (!browser) return; // Ensure this runs only in the browser
+		loading = true;
+
+		try {
+			const response = await fetch('/contracts/', {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json'
+				},
+				body: JSON.stringify({
+					participants: [
+						participants[0],
+						{ name: 'David The Great', email: 'david117@tutanota.com' }
+					],
+					contractContent: 'contractDraftResult'
+				})
+			});
+
+			if (!response.ok) {
+				throw new Error('Network response was not ok');
+			}
+
+			const result = await response.json();
+		} catch (error) {
+			console.error('Error creating contract:', error);
+			alert('Error creating contract. Please try again.');
+		}
+
+		loading = false;
+	}
+
+	async function createContract() {
+		if (!browser) return; // Ensure this runs only in the browser
+		loading = true;
+
+		try {
+			const response = await fetch('/contracts/', {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json'
+				},
+				body: JSON.stringify({
+					participants,
+					contractContent: contractDraftResult
+				})
+			});
+
+			if (!response.ok) {
+				throw new Error('Network response was not ok');
+			}
+
+			const result = await response.json();
+			// You might want to update the UI or redirect the user here
+		} catch (error) {
+			console.error('Error creating contract:', error);
+			alert('Error creating contract. Please try again.');
+		}
+
+		loading = false;
 	}
 
 	async function createDraft() {
@@ -75,7 +138,7 @@
 		>
 		<h3 class="h3 mt-4">What do you want to agree on?</h3>
 		<input class="input mt-2" type="text" bind:value={contractDraft} />
-		<button class="btn mt-2 variant-filled-success" type="button" on:click={createDraft}
+		<button class="btn mt-2 variant-filled-primary" type="button" on:click={createDraft}
 			>✨ Create Draft</button
 		>
 
@@ -98,5 +161,15 @@
 				</div>
 			{/if}
 		{/if}
+
+		{#if contractDraftResult.length > 1 && !isEditing}
+			<button class="btn mt-2 variant-filled-success" type="button" on:click={createContract}
+				>Create Contract</button
+			>
+		{/if}
+
+		<button class="btn mt-2 variant-filled-success" type="button" on:click={createContractTest}
+			>RASFQWAEFG</button
+		>
 	</div>
 </div>

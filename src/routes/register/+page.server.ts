@@ -13,7 +13,10 @@ export const actions: Actions = {
 			name: string;
 			password: string;
 			passwordConfirm: string;
+			emailVisibility: boolean;
 		};
+
+		data.emailVisibility = true;
 
 		try {
 			await locals.pb.collection('users').create(data);
