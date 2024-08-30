@@ -64,7 +64,8 @@ export const POST: RequestHandler = async ({ request, locals }) => {
 			owner: currentUser.id,
 			participants: participantIds,
 			content: contractContent,
-			scriveDocumentId: r.startResult.id
+			scriveDocumentId: r.startResult.id,
+			scriveStatus: false
 		});
 	} catch (e) {
 		console.log(e);

@@ -114,18 +114,14 @@ export async function startSigning(documentId: string): Promise<any> {
 	return fetchFromApi(`/documents/${documentId}/start`, 'POST');
 }
 
-<<<<<<< Updated upstream
-export async function createDocAndStartSigningProcess(
-	documentContents: string,
-	signatorieEmails: string[]
-): Promise<any> {
-=======
 export async function getDocument(documentId: string): Promise<any> {
 	return fetchFromApi(`/documents/${documentId}/get`);
 }
 
-export async function createDocAndStartSigningProcess(documentContents: string, signatorieEmails: string[]): Promise<any> {
->>>>>>> Stashed changes
+export async function createDocAndStartSigningProcess(
+	documentContents: string,
+	signatorieEmails: string[]
+): Promise<any> {
 	const document = await createNewDocument(documentContents);
 	const documentId = document.id;
 	document.parties = (document.parties || []) as Signatory[];
