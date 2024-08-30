@@ -9,7 +9,6 @@ const OAUTH_CONSUMER_KEY = env.SCRIVE_OAUTH_CONSUMER_KEY;
 const OAUTH_CONSUMER_SECRET = env.SCRIVE_OAUTH_CONSUMER_SECRET;
 const OAUTH_TOKEN = env.SCRIVE_OAUTH_TOKEN;
 const OAUTH_TOKEN_SECRET = env.SCRIVE_OAUTH_TOKEN_SECRET;
-const USER_ID = env.SCRIVE_USER_ID;
 
 function getAuthorizationHeader() {
 	const oauthSignature = `${OAUTH_CONSUMER_SECRET}&${OAUTH_TOKEN_SECRET}`;
@@ -49,7 +48,39 @@ async function fetchFromApi(endpoint: string, method: string = 'GET', body?: any
 	}
 }
 
-export async function createNewDocument(documentContents: string, saved: boolean = true): Promise<any> {
+async function postToApi(endpoint: string, params: {
+	[key: string]: any
+}): Promise<any> {
+	let url = `${API_BASE_URL}${endpoint}`;
+	const headers: any = {
+		'Authorization': getAuthorizationHeader()
+	};
+
+	const options: any = {
+		method: 'POST',
+		headers: headers
+	};
+
+	for (const key in params) {
+		if (params.hasOwnProperty(key)) {
+			url += '?' + key + '=' + JSON.stringify(params[key]);
+		}
+	}
+
+	try {
+		const response = await fetch(url, options);
+		if (!response.ok) {
+			const errorText = await response.text();
+			throw new Error(`HTTP error! Status: ${response.status}, Message: ${errorText}`);
+		}
+		return await response.json();
+	} catch (error) {
+		console.error('Failed to post data:', error);
+		throw error;
+	}
+}
+
+export async function createNewDocument(documentContents: string, saved: boolean = true): Promise<{ id, parties }> {
 	const formData = new FormData();
 	const pdf: Buffer = await createPDFfromString(documentContents);
 
@@ -63,42 +94,58 @@ export async function createNewDocument(documentContents: string, saved: boolean
 	return fetchFromApi('/documents/new', 'POST', formData, 'multipart/form-data');
 }
 
-export async function getDocumentList(): Promise<any> {
-	return fetchFromApi(`/documents/list`);
-}
-
-export async function getDocument(documentId: string): Promise<any> {
-	return fetchFromApi(`/documents/${documentId}/get`);
-}
-
 export async function updateDocument(documentId: string, updates: any): Promise<any> {
-	return fetchFromApi(`/documents/${documentId}/update`, 'POST', updates);
-}
-
-export async function setSignatories(documentId: string, signatories: any[]): Promise<any> {
-	return fetchFromApi(`/documents/${documentId}/setattachments`, 'POST', { signatories });
+	console.log(updates);
+	return postToApi(`/documents/${documentId}/update`, updates);
 }
 
 export async function startSigning(documentId: string): Promise<any> {
 	return fetchFromApi(`/documents/${documentId}/start`, 'POST');
 }
 
-export async function getDocumentStatus(documentId: string): Promise<any> {
-	return fetchFromApi(`/documents/${documentId}/getstatus`);
-}
 
-export async function cancelDocument(documentId: string): Promise<any> {
-	return fetchFromApi(`/documents/${documentId}/cancel`, 'POST');
-}
-
-export async function initiateSigningProcess(documentId: string, signatories: any[]): Promise<any> {
-	await setSignatories(documentId, signatories);
+export async function createDocAndStartSigningProcess(documentContents: string, signatorieEmails: string[]): Promise<any> {
+	const document = await createNewDocument(documentContents);
+	const documentId = document.id;
+	document.parties = (document.parties || []) as Signatory[];
+	document.parties = document.parties.concat(createSignatoriesFromEmails(signatorieEmails));
+	await updateDocument(documentId, { document });
 
 	const startResult = await startSigning(documentId);
 
-	const status = await getDocumentStatus(documentId);
+	return { startResult };
+}
 
-	return { startResult, status };
+function createSignatoriesFromEmails(emails: string[]): Signatory[] {
+	return emails.map((email, index) => {
+		const name = email.split('@')[0];
+
+		return {
+			is_signatory: true,
+			signatory_role: 'signing_party',
+			fields: [
+				{
+					type: 'name',
+					order: 1,
+					value: name,
+					is_obligatory: true,
+					should_be_filled_by_sender: true,
+					editable_by_signatory: false,
+					placements: [],
+					description: null
+				},
+				{
+					type: 'email',
+					value: email,
+					is_obligatory: true,
+					should_be_filled_by_sender: true,
+					editable_by_signatory: false,
+					placements: [],
+					description: null
+				}
+			]
+		};
+	});
 }
 
 function createPDFfromString(content: string): Promise<Buffer> {
