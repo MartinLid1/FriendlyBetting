@@ -6,7 +6,7 @@ const readline = require("readline");
 dotenv.config();
 
 // OpenAI API key
-const apiKey = "API_KEY_HERE"
+const apiKey = ""
 
 // Function to call the ChatGPT API
 async function callChatGPT(prompt) {
