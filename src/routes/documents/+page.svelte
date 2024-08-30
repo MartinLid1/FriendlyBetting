@@ -4,4 +4,6 @@
 	export let data: PageServerData;
 </script>
 
-{JSON.stringify(data)}
+<div class="container mx-auto">
+	{JSON.stringify(data)}
+</div>
