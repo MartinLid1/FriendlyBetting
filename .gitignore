@@ -1,3 +1,4 @@
+.db/pocketbase
 # Logs
 logs
 *.log
