@@ -60,7 +60,7 @@ export const POST: RequestHandler = async ({ request, locals }) => {
 
 	try {
 		const contract = await locals.pb.collection('contracts').create({
-			name: `Contract between ${participants.map((participant) => participant.name).join(', ')}`,
+			name: `Contract (title) between ${participants.map((participant) => participant.name).join(', ')}`,
 			owner: currentUser.id,
 			participants: participantIds,
 			content: contractContent,

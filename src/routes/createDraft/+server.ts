@@ -41,6 +41,7 @@ const draftPrompt = async (participants, contractDraft) => {
 		const result = await response.json();
 		return result.choices[0].message.content;
 	} catch (error) {
+		console.log(response);
 		console.error('Error calling ChatGPT API:', error);
 		throw error;
 	}

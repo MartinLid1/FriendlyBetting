@@ -31,14 +31,14 @@
 			>
 				<header class="card-header">
 					<h5 class="h5">{doc.name}</h5>
-				</header>
-				<section class="p-4 text-small"><div>{@html marked(doc.content)}</div></section>
-				<footer class="card-footer">
 					{#each doc.expand.participants as p}
 						<span class="btn btn-xs variant-ghost mr-1">
 							{p.name}
 						</span>
 					{/each}
+				</header>
+				<section class="p-4 text-small"><div>{@html marked(doc.content)}</div></section>
+				<footer class="card-footer">
 					<div>
 						<button
 							class="btn mt-5 variant-filled-secondary"
