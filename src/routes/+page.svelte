@@ -1,9 +1,12 @@
 <script lang="ts">
 	import { browser } from '$app/environment';
+	import SvelteMarkdown from 'svelte-markdown';
 
 	let participants = [{ name: '', email: '' }];
 	let contractDraft = '';
 	let contractDraftResult = '';
+	let loading = false;
+	let isEditing = false;
 
 	function addParticipant() {
 		participants = [...participants, { name: '', email: '' }];
@@ -17,6 +20,7 @@
 
 	async function createDraft() {
 		if (!browser) return; // Ensure this runs only in the browser
+		loading = true;
 
 		try {
 			const response = await fetch('/createDraft/', {
@@ -29,16 +33,17 @@
 
 			const result = await response.json();
 			contractDraftResult = result;
-
-			if (response.ok) {
-				alert('Draft created successfully: ' + result.message);
-			} else {
-				alert('Failed to create draft: ' + result.message);
-			}
+			isEditing = false;
 		} catch (error) {
 			console.error('Error creating draft:', error);
 			alert('Error creating draft. Please try again.');
 		}
+
+		loading = false;
+	}
+
+	function toggleEdit() {
+		isEditing = !isEditing;
 	}
 </script>
 
@@ -67,14 +72,30 @@
 		<button class="btn variant-ghost-primary mt-2" type="button" on:click={addParticipant}
 			>Add Participant</button
 		>
-		<h3 class="h3 mt-4">What do you want to create contract for?</h3>
+		<h3 class="h3 mt-4">What do you want to agree on?</h3>
 		<input class="input mt-2" type="text" bind:value={contractDraft} />
 		<button class="btn mt-2 variant-filled-success" type="button" on:click={createDraft}
-			>Create Draft</button
+			>✨ Create Draft</button
 		>
 
-		<div>
-			{JSON.stringify(contractDraftResult)}
-		</div>
+		{#if loading}
+			Loading ...
+		{/if}
+
+		{#if contractDraftResult.length > 1}
+			{#if isEditing}
+				<textarea
+					class="textarea mt-4"
+					bind:value={contractDraftResult}
+					style="height: {Math.max(200, contractDraftResult.split('\n').length * 20)}px;"
+				></textarea>
+				<button class="btn mt-2 variant-filled-primary" on:click={toggleEdit}>Save</button>
+			{:else}
+				<div class="mt-4">
+					<SvelteMarkdown source={contractDraftResult} />
+					<button class="btn mt-2 variant-filled-primary" on:click={toggleEdit}>Edit</button>
+				</div>
+			{/if}
+		{/if}
 	</div>
 </div>

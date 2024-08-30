@@ -1,15 +1,48 @@
-// src/routes/createDraft/+server.ts
 import type { RequestHandler } from '@sveltejs/kit';
 
-// Placeholder function to simulate backend processing
-async function placeHolder(participants, contractDraft) {
-	// Logic to handle the incoming data
-	console.log('Processing data:', { participants, contractDraft });
-	// Simulate some database or other async action
-	return new Promise((resolve) =>
-		setTimeout(() => resolve({ status: 'success', message: 'Draft created successfully!' }), 1000)
-	);
-}
+const placeHolder = async (participants, contractDraft) => {
+	const url = 'https://api.openai.com/v1/chat/completions';
+
+	const apiKey =
+		'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';
+
+	const headers = {
+		'Content-Type': 'application/json',
+		Authorization: `Bearer ${apiKey}`
+	};
+
+	const sParticipants = JSON.stringify(participants);
+
+	const contractDraftPrompt = `Here is a list of participants: ${sParticipants}. They want help with writing a contract draft.
+	This is what they want: ${contractDraft}. Please write a contract draft where you use the participants and only output valid markdown.
+	Do not output anything else before or after the contract draft. Do not add any signature area - I will do this later.`;
+
+	const data = {
+		model: 'gpt-4o',
+		messages: [
+			{ role: 'system', content: 'You are a helpful legal assistant. You output valid markdown.' },
+			{ role: 'user', content: contractDraftPrompt }
+		]
+	};
+
+	try {
+		const response = await fetch(url, {
+			method: 'POST',
+			headers: headers,
+			body: JSON.stringify(data)
+		});
+
+		if (!response.ok) {
+			throw new Error(`HTTP error! status: ${response.status}`);
+		}
+
+		const result = await response.json();
+		return result.choices[0].message.content;
+	} catch (error) {
+		console.error('Error calling ChatGPT API:', error);
+		throw error;
+	}
+};
 
 export const POST: RequestHandler = async ({ request }) => {
 	try {
@@ -27,6 +60,7 @@ export const POST: RequestHandler = async ({ request }) => {
 		const result = await placeHolder(participants, contractDraft);
 
 		// Return the success response from the placeholder function
+
 		return new Response(JSON.stringify(result), {
 			status: 200,
 			headers: {
