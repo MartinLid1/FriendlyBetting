@@ -49,19 +49,23 @@ export const POST: RequestHandler = async ({ request, locals }) => {
 		}
 	}
 	// Create the contract
+	let r;
+	try {
+		r = await createDocAndStartSigningProcess(contractContent, participantEmails);
+	} catch (error) {
+		console.log(error);
+	}
+
+	console.log(r);
+
 	try {
 		const contract = await locals.pb.collection('contracts').create({
 			name: `Contract between ${participants.map((participant) => participant.name).join(', ')}`,
 			owner: currentUser.id,
 			participants: participantIds,
-			content: contractContent
+			content: contractContent,
+			scriveDocumentId: r.startResult.id
 		});
-	} catch (error) {
-		console.log(error);
-	}
-
-	try {
-		const r = createDocAndStartSigningProcess(contractContent, participantEmails);
 	} catch (e) {
 		console.log(e);
 	}
