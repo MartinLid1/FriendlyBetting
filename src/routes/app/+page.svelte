@@ -1,7 +1,9 @@
 <script lang="ts">
 	import type { PageData } from './$types';
 	import { browser } from '$app/environment';
-	import SvelteMarkdown from 'svelte-markdown';
+	import { marked } from 'marked';
+	import { redirect } from '@sveltejs/kit';
+	import { goto } from '$app/navigation';
 
 	let contractDraft = '';
 	let contractDraftResult = '';
@@ -39,11 +41,9 @@
 				})
 			});
 
-			if (!response.ok) {
-				throw new Error('Network response was not ok');
+			if (response.ok) {
+				goto('/documents');
 			}
-
-			const result = await response.json();
 		} catch (error) {
 			console.error('Error creating contract:', error);
 			alert('Error creating contract. Please try again.');
@@ -68,15 +68,11 @@
 				})
 			});
 
-			if (!response.ok) {
-				throw new Error('Network response was not ok');
+			if (response.ok) {
+				goto('/documents');
 			}
-
-			const result = await response.json();
-			// You might want to update the UI or redirect the user here
 		} catch (error) {
 			console.error('Error creating contract:', error);
-			alert('Error creating contract. Please try again.');
 		}
 
 		loading = false;
@@ -156,7 +152,7 @@
 				<button class="btn mt-2 variant-filled-primary" on:click={toggleEdit}>Save</button>
 			{:else}
 				<div class="mt-4">
-					<SvelteMarkdown source={contractDraftResult} />
+					<div>{@html marked(contractDraftResult)}</div>
 					<button class="btn mt-2 variant-filled-primary" on:click={toggleEdit}>Edit</button>
 				</div>
 			{/if}

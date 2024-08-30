@@ -3,8 +3,7 @@ import type { RequestHandler } from '@sveltejs/kit';
 const draftPrompt = async (participants, contractDraft) => {
 	const url = 'https://api.openai.com/v1/chat/completions';
 
-	const apiKey =
-		'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';
+	const apiKey = env.PRIVATE_OPENAI_API_KEY;
 
 	const headers = {
 		'Content-Type': 'application/json',

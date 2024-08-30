@@ -1,5 +1,5 @@
 <script lang="ts">
-	import SvelteMarkdown from 'svelte-markdown';
+	import { marked } from 'marked';
 	import type { PageServerData } from './$types';
 
 	export let data: PageServerData;
@@ -13,7 +13,7 @@
 				<header class="card-header">
 					<h5 class="h5">{doc.name}</h5>
 				</header>
-				<section class="p-4 text-small"><SvelteMarkdown source={doc.content} /></section>
+				<section class="p-4 text-small"><div>{@html marked(doc.content)}</div></section>
 				<footer class="card-footer">
 					{#each doc.expand.participants as p}
 						<span class="chip mr-2 variant-filled">

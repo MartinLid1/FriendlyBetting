@@ -35,7 +35,7 @@
 		<AppBar>
 			<svelte:fragment slot="lead">
 				<strong class="text-xl">FriendlyBetting</strong>
-				<span class="ml-4">{data.user.email}</span>
+				<span class="ml-4">{data.user?.email}</span>
 			</svelte:fragment>
 			<svelte:fragment slot="trail">
 				<a href="/documents"> <button class="btn variant-soft">My bets</button></a>
