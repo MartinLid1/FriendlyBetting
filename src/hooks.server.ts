@@ -22,7 +22,6 @@ export const handle: Handle = async ({ event, resolve }) => {
 	event.locals.pb = pb;
 	event.locals.user = pb.authStore.model;
 
-	/*
 	if (event.url.pathname === '/') {
 		if (!event.locals.user) {
 			throw redirect(303, '/login');
@@ -30,7 +29,7 @@ export const handle: Handle = async ({ event, resolve }) => {
 			throw redirect(303, '/dashboard');
 		}
 	}
-	*/
+
 	for (const url of PROTECTED_URLS) {
 		if (event.url.pathname.startsWith(url) && !event.locals.user) {
 			throw redirect(303, handleLoginRedirect(event, 'You must be logged in to see this page'));

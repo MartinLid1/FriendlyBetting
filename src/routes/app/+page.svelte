@@ -163,9 +163,10 @@
 				>Create Contract</button
 			>
 		{/if}
-
+		<!--
 		<button class="btn mt-2 variant-filled-success" type="button" on:click={createContractTest}
 			>RASFQWAEFG</button
 		>
+		-->
 	</div>
 </div>

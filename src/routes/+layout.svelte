@@ -35,10 +35,11 @@
 		<AppBar>
 			<svelte:fragment slot="lead">
 				<strong class="text-xl">FriendlyBetting</strong>
-				<span class="ml-4">{data.user?.email}</span>
+				<span class="ml-4">{data.user?.email ? data.user.email : ''}</span>
 			</svelte:fragment>
 			<svelte:fragment slot="trail">
 				<a href="/documents"> <button class="btn variant-soft">My bets</button></a>
+				<a href="/logout"> <button class="btn variant-soft">Logout</button></a>
 				<span>by ATG/Hjärngänget</span>
 			</svelte:fragment>
 		</AppBar>
