@@ -1,8 +1,8 @@
 import type { RequestHandler } from '@sveltejs/kit';
 import { redirect } from '@sveltejs/kit';
+import { createDocAndStartSigningProcess } from '$lib/scrive/scriveApi';
 
 export const POST: RequestHandler = async ({ request, locals }) => {
-	console.log('AAA');
 	const body = await request.json();
 	const { participants, contractContent } = body;
 
@@ -12,15 +12,13 @@ export const POST: RequestHandler = async ({ request, locals }) => {
 		});
 	}
 
-	console.log('BBB');
-
 	const currentUser = locals.pb.authStore.model;
 	const participantIds = [];
+	const participantEmails = [];
 
 	for (const participant of participants) {
 		let user;
 		try {
-			console.log('CCC');
 			const existingUser = await locals.pb
 				.collection('users')
 				.getFirstListItem(`email = "${participant.email}"`);
@@ -28,6 +26,7 @@ export const POST: RequestHandler = async ({ request, locals }) => {
 			if (existingUser) {
 				user = existingUser;
 				participantIds.push(user.id);
+				participantEmails.push(user.email);
 			}
 		} catch (userError) {
 			console.log(userError);
@@ -43,6 +42,7 @@ export const POST: RequestHandler = async ({ request, locals }) => {
 				user = await locals.pb.collection('users').create(settings);
 				console.log('New user created:', user.id);
 				participantIds.push(user.id);
+				participantEmails.push(user.email);
 			} catch (error) {
 				console.log(error);
 			}
@@ -60,5 +60,10 @@ export const POST: RequestHandler = async ({ request, locals }) => {
 		console.log(error);
 	}
 
+	try {
+		const r = createDocAndStartSigningProcess(contractContent, participantEmails);
+	} catch (e) {
+		console.log(e);
+	}
 	return new Response({ status: 200 });
 };
